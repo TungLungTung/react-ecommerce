@@ -1,0 +1,62 @@
+import { initializeApp } from 'firebase/app';
+import {
+  getAuth,
+  signInWithRedirect,
+  signInWithPopup,
+  GoogleAuthProvider
+} from 'firebase/auth';
+
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyBOJ-FR4qFhrq-cUQVFY9IePbdN2ynVoxE',
+  authDomain: 'ecommerce-db-3c471.firebaseapp.com',
+  projectId: 'ecommerce-db-3c471',
+  storageBucket: 'ecommerce-db-3c471.appspot.com',
+  messagingSenderId: '953065707493',
+  appId: '1:953065707493:web:baacf981910088f8e1c10c'
+};
+
+// Initialize Firebase
+const firebaseApp = initializeApp(firebaseConfig);
+
+/// Create provider configuration
+// Give back google instance
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({
+  propmt: 'select_account'
+});
+
+export const auth = getAuth();
+export const signInWithGooglePopup = () => {
+  return signInWithPopup(auth, provider);
+};
+
+/// Create db. (db instance)
+export const db = getFirestore();
+
+/// Take data from auth, store that in firestore collection
+export const createUserDocumentFromAuth = async (userAuth) => {
+  const userDocRef = doc(db, 'users', userAuth.uid);
+  /// Create Snapshot
+  const userSnapshot = await getDoc(userDocRef);
+  /// Check if user data exists
+  /// If user data does not exists
+  // Create / set the document with data from userAuth in my collection
+  if (!userSnapshot.exists()) {
+    const { displayName, email } = userAuth;
+    const createAt = new Date();
+    try {
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createAt
+      });
+    } catch (error) {
+      console.log('Error creating the user', error.message);
+    }
+  }
+
+  return userDocRef;
+};
