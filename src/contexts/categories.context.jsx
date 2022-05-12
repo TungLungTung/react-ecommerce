@@ -20,7 +20,7 @@ export const CategoriesProvider = ({ children }) => {
     /// Khuc nay async nên khong dung truc tiep ben tren, phai viet ham
     const getCategoriesMap = async () => {
       const categoryMap = await getCategoriesAndDocuments();
-      console.log(categoryMap);
+      // console.log(categoryMap);
       setCategoriesMap(categoryMap);
     };
 
