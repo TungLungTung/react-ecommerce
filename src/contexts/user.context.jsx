@@ -1,4 +1,6 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useEffect, useReducer } from 'react';
+
+import { createAction } from '../utils/reducer/reducer.utils';
 
 import {
   onAuthStateChangedListener,
@@ -11,12 +13,46 @@ export const UserContext = createContext({
   setCurrentUser: () => null
 });
 
+export const USER_ACTION_TYPES = {
+  SET_CURRENT_USER: 'SET_CURRENT_USER'
+};
+
+//// Reducers
+//// Function to return object.
+const userReducer = (state, action) => {
+  /// Object we want to store
+  /// state is current User.
+  console.log(action);
+  const { type, payload } = action;
+
+  switch (type) {
+    case USER_ACTION_TYPES.SET_CURRENT_USER:
+      return {
+        /// Receive state obj from state and replace it
+        ...state,
+        currentUser: payload
+      };
+    default:
+      throw new Error(`Unhanled type ${type} in userReducer`);
+  }
+};
+
+const INITIAL_STATE = {
+  currentUser: null
+};
+
 export const UserProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  /// Reducers
+  const [{ currentUser }, dispatch] = useReducer(userReducer, INITIAL_STATE);
+  console.log(currentUser);
+
+  const setCurrentUser = (user) => {
+    dispatch(createAction(USER_ACTION_TYPES.SET_CURRENT_USER, user));
+  };
+
+  // const [currentUser, setCurrentUser] = useState(null);
   const value = { currentUser, setCurrentUser };
-
   // signOutUser();
-
   useEffect(() => {
     const unsubscribe = onAuthStateChangedListener((user) => {
       // console.log(user);
