@@ -17,6 +17,10 @@ export const USER_ACTION_TYPES = {
   SET_CURRENT_USER: 'SET_CURRENT_USER'
 };
 
+const INITIAL_STATE = {
+  currentUser: null
+};
+
 //// Reducers
 //// Function to return object.
 const userReducer = (state, action) => {
@@ -37,10 +41,6 @@ const userReducer = (state, action) => {
   }
 };
 
-const INITIAL_STATE = {
-  currentUser: null
-};
-
 export const UserProvider = ({ children }) => {
   /// Reducers
   const [{ currentUser }, dispatch] = useReducer(userReducer, INITIAL_STATE);
@@ -53,6 +53,7 @@ export const UserProvider = ({ children }) => {
   // const [currentUser, setCurrentUser] = useState(null);
   const value = { currentUser, setCurrentUser };
   // signOutUser();
+  /// Neu dung redux thi không can useEffect này nữa. tạm thời ẩn
   useEffect(() => {
     const unsubscribe = onAuthStateChangedListener((user) => {
       // console.log(user);
