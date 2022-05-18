@@ -5,11 +5,7 @@ import storage from 'redux-persist/lib/storage';
 
 import logger from 'redux-logger';
 // Redux-Thunk
-// import thunk from 'redux-thunk';
-
-/// Redux-Saga
-import createSagaMiddleware from 'redux-saga';
-import { rootSaga } from './root-saga';
+import thunk from 'redux-thunk';
 
 // Root reducer
 import { rootReducer } from './root-reducer';
@@ -22,15 +18,12 @@ const persistConfig = {
   // blacklist: ['user']
 };
 
-/// Saga middleware
-const sagaMiddleware = createSagaMiddleware();
-
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 /// Middle ware, a kind of little library , run before an action hit the reducer
 const middleWares = [
   process.env.NODE_ENV !== 'production' && logger,
-  sagaMiddleware
+  thunk
 ].filter(Boolean);
 
 /// Config to use Redux Devtool in chrome
@@ -43,8 +36,5 @@ const composeEnhancer =
 const composeEnhancers = composeEnhancer(applyMiddleware(...middleWares));
 
 export const store = createStore(persistedReducer, undefined, composeEnhancers);
-
-/// Tell Saga middleware to run.
-sagaMiddleware.run(rootSaga);
 
 export const persistor = persistStore(store);

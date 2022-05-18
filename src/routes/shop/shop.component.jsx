@@ -6,14 +6,19 @@ import Category from '../../routes/category/category.component';
 import { CategoriesProvider } from '../../contexts/categories.context';
 
 import { getCategoriesAndDocuments } from '../../utils/firebase/firebase.utils';
-import { fetchCategoriesAsync } from '../../store/categories/category.action';
+import { fetchCategoriesStart } from '../../store/categories/category.action';
+// import { fetchCategoriesAsync } from '../../store/categories/category.action';
 
 import './shop.styles.scss';
 const Shop = () => {
   const dispatch = useDispatch();
 
+  // useEffect(() => {
+  //   dispatch(fetchCategoriesAsync());
+  // }, []);
+
   useEffect(() => {
-    dispatch(fetchCategoriesAsync());
+    dispatch(fetchCategoriesStart());
   }, []);
 
   return (
