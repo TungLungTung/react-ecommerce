@@ -1,28 +1,39 @@
 import { compose, createStore, applyMiddleware } from 'redux';
-// import logger from 'redux-logger';
+
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
+import logger from 'redux-logger';
+import thunk from 'redux-thunk';
 
 // Root reducer
 import { rootReducer } from './root-reducer';
 
-/// Using curry function
-const loggerMiddleware = (store) => (next) => (action) => {
-  /// Code we want to middleware
-  if (!action.type) {
-    return next(action);
-  }
-  console.log('type: ', action.type);
-  console.log('payload: ', action.payload);
-  console.log('currentState: ', store.getState());
-
-  // Pass to another middleware
-  next(action);
-
-  /// Synchornus
-  console.log('next state: ', store.getState());
+/// Config persist
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['cart']
+  // blacklist: ['user']
 };
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 /// Middle ware, a kind of little library , run before an action hit the reducer
-const middleWares = [loggerMiddleware];
+const middleWares = [
+  process.env.NODE_ENV !== 'production' && logger,
+  thunk
+].filter(Boolean);
 
-const composeEnhancers = compose(applyMiddleware(...middleWares));
+/// Config to use Redux Devtool in chrome
+const composeEnhancer =
+  (process.env.NODE_ENV !== 'production' &&
+    window &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
 
-export const store = createStore(rootReducer, undefined, composeEnhancers);
+const composeEnhancers = composeEnhancer(applyMiddleware(...middleWares));
+
+export const store = createStore(persistedReducer, undefined, composeEnhancers);
+
+export const persistor = persistStore(store);
