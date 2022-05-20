@@ -5,7 +5,8 @@ import { useEffect } from 'react';
 
 import {
   onAuthStateChangedListener,
-  createUserDocumentFromAuth
+  createUserDocumentFromAuth,
+  getCurrentUser
 } from './utils/firebase/firebase.utils';
 
 import React from 'react';
@@ -15,25 +16,26 @@ import Authentication from './routes/authentication/authentication.component';
 import CheckOut from './routes/checkout/checkout.component';
 import Shop from './routes/shop/shop.component';
 
-import { setCurrentUser } from './store/user/user.action';
+import { checkUserSession } from './store/user/user.action';
 
 const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChangedListener((user) => {
-      // console.log(user);
+    dispatch(checkUserSession());
 
-      /// Only create user document if user come through
-      if (user) {
-        createUserDocumentFromAuth(user);
-      }
-      dispatch(setCurrentUser(user));
-    });
-
-    /// Protect return
-    /// Run unsubscribe when unmount - cai nay quan trong day
-    return unsubscribe;
+    /// Wait to using observer in firebase
+    // const unsubscribe = onAuthStateChangedListener((user) => {
+    //   // console.log(user);
+    //   /// Only create user document if user come through
+    //   if (user) {
+    //     createUserDocumentFromAuth(user);
+    //   }
+    //   dispatch(setCurrentUser(user));
+    // });
+    // /// Protect return
+    // /// Run unsubscribe when unmount - cai nay quan trong day
+    // return unsubscribe;
   }, []);
 
   return (

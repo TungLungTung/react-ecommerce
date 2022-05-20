@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
@@ -7,6 +8,8 @@ import {
   createAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth
 } from '../../utils/firebase/firebase.utils';
+
+import { signUpStart } from '../../store/user/user.action';
 
 // import { UserContext } from '../../contexts/user.context';
 
@@ -20,6 +23,7 @@ const defaultFormFields = {
 };
 
 const SignUpForm = () => {
+  const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { displayName, email, password, confirmPassword } = formFields;
 
@@ -42,18 +46,21 @@ const SignUpForm = () => {
     /// Create user
     // try catch because it's may be can fail
     try {
-      /// user is destructing from respone
-      const { user } = await createAuthUserWithEmailAndPassword(
-        email,
-        password
-      );
+      // Saga
+      dispatch(signUpStart(email, password, displayName));
 
-      // Store to data
-      // setCurrentUser(user);
+      // /// user is destructing from respone
+      // const { user } = await createAuthUserWithEmailAndPassword(
+      //   email,
+      //   password
+      // );
 
-      /// After get back response user
-      /// Displayname se khong co o tren res user tren, do do phai add them neu muon them vao user
-      await createUserDocumentFromAuth(user, { displayName });
+      // // Store to data
+      // // setCurrentUser(user);
+
+      // /// After get back response user
+      // /// Displayname se khong co o tren res user tren, do do phai add them neu muon them vao user
+      // await createUserDocumentFromAuth(user, { displayName });
       /// Clear signup
       resetFormFields();
     } catch (error) {
