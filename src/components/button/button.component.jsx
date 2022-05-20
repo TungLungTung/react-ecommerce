@@ -2,7 +2,8 @@
 import {
   BaseButton,
   GoogleSignInButton,
-  InvertedButton
+  InvertedButton,
+  ButtonSpinner
 } from './button.styles';
 
 export const BUTTON_TYPE_CLASSES = {
@@ -19,14 +20,15 @@ const getButton = (buttonType = BUTTON_TYPE_CLASSES.base) =>
     [BUTTON_TYPE_CLASSES.inverted]: InvertedButton
   }[buttonType]);
 
-const Button = ({ children, buttonType, ...otherProps }) => {
+const Button = ({ children, buttonType, isLoading, ...otherProps }) => {
   const CustomButton = getButton(buttonType);
   return (
     <CustomButton
+      disabled={isLoading}
       // className={`button-container ${BUTTON_TYPE_CLASSES[buttonType]}`}
       {...otherProps}
     >
-      {children}
+      {isLoading ? <ButtonSpinner /> : children}
     </CustomButton>
   );
 };

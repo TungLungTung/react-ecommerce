@@ -4,6 +4,10 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+// Stripe
+import { Elements } from '@stripe/react-stripe-js';
+import { stripePromise } from './utils/stripe/stripe.utils';
+
 /// React router dom
 import { BrowserRouter } from 'react-router-dom';
 
@@ -26,7 +30,9 @@ ReactDOM.render(
           {/* <UserProvider> */}
           {/* <CategoriesProvider> */}
           {/* <CartProvider> */}
-          <App />
+          <Elements stripe={stripePromise}>
+            <App />
+          </Elements>
           {/* </CartProvider> */}
           {/* </CategoriesProvider> */}
           {/* </UserProvider> */}
